@@ -9,10 +9,14 @@ int main() {
   std::cerr << std::unitbuf;
 
   // TODO: Uncomment the code below to pass the first stage
-  std::cout << "$ ";
+  while (true){
+    cout << "$ ";
 
-  string input;
-  getline(cin, input);
+    string input;
+    getline(cin, input);
 
-  cout << input << ": command not found" << endl;
+    cout << input << ": command not found" << endl;
+  }
+
+  return 0;
 }
