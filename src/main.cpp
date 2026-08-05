@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <unordered_set>
 
 using namespace std;
 
@@ -9,6 +10,12 @@ int main() {
   std::cerr << std::unitbuf;
 
   // TODO: Uncomment the code below to pass the first stage
+  unordered_set<string> builtins = {
+    "exit",
+    "echo",
+    "type"
+  };
+
   while (true){
     cout << "$ ";
 
@@ -25,7 +32,7 @@ int main() {
     if (input.substr(0, 5) == "type "){
       string command = input.substr(5);
 
-      if (command == "exit" || command == "type"){
+      if (builtins.find(command) != builtins.end()){
         cout << command << " is a shell builtin";
       }
       else {
