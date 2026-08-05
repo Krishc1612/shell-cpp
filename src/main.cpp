@@ -22,6 +22,17 @@ int main() {
       continue;
     }
 
+    if (input.substr(0, 5) == "type "){
+      string command = input.substr(5);
+
+      if (command == "exit" || command == "type"){
+        cout << command << " is a shell builtin";
+      }
+      else {
+        cout << command << ": not found";
+      }
+    }
+    
     cout << input << ": command not found" << endl;
   }
 
