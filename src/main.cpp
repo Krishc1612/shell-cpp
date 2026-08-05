@@ -38,6 +38,8 @@ int main() {
       else {
         cout << command << ": not found";
       }
+
+      continue;
     }
     
     cout << input << ": command not found" << endl;
