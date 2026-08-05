@@ -33,10 +33,10 @@ int main() {
       string command = input.substr(5);
 
       if (builtins.find(command) != builtins.end()){
-        cout << command << " is a shell builtin";
+        cout << command << " is a shell builtin" << endl;
       }
       else {
-        cout << command << ": not found";
+        cout << command << ": not found" << endl;
       }
 
       continue;
