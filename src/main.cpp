@@ -15,9 +15,9 @@ int main() {
     string input;
     getline(cin, input);
 
-    if (input == "exit") break;
-
-    cout << input << ": command not found" << endl;
+    if (input.substr(0, 5) == "echo "){
+      cout << input.substr(5, input.size()) << endl;
+    }
   }
 
   return 0;
