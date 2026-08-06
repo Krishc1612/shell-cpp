@@ -68,6 +68,8 @@ int main() {
 			}
 
 			if (!found) cout << command << ": not found" << endl;
+			
+			continue;
 		}
 		
 		cout << input << ": command not found" << endl;
