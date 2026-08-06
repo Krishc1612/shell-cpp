@@ -93,15 +93,14 @@ int main() {
 			if (arg != "") params.push_back(arg);
 
 			string command = params[0];
-			pid_t pid = fork();
 
-			if (pid == 0){
-				string PATH = getenv("PATH");
-				PATH += ":";
+			string PATH = getenv("PATH");
+			PATH += ":";
 
-				auto [isValid, pathTo] = hasValidExecutable(PATH, command);
+			auto [isValid, pathTo] = hasValidExecutable(PATH, command);
 
-				if (isValid){
+			if (isValid){
+				if (fork() == 0){
 					const char* p = pathTo.data();
 					vector<char*> args;
 
@@ -113,12 +112,11 @@ int main() {
 					execv(p, args.data());
 				}
 				else {
-					cout << command << ": not found" << endl;
-					break;
+					wait(nullptr);
 				}
 			}
 			else {
-				wait(nullptr);
+				cout << command << ": not found" << endl;
 			}
 		}
 	}
