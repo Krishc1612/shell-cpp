@@ -98,7 +98,8 @@ int main() {
 			// else {
 			// 	wait(nullptr);
 			// }
-			cout << current_path() << endl;
+			string path = current_path();
+			cout << path << endl;
 		}
 		else {
 			vector<string> params;
