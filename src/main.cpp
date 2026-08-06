@@ -81,23 +81,24 @@ int main() {
 			}
 		}
 		else if (input == "pwd"){
-			string pwdPath = "/usr/lib/cargo/bin/coreutils/pwd";
-			string pwd = "pwd";
+			// string pwdPath = "/usr/lib/cargo/bin/coreutils/pwd";
+			// string pwd = "pwd";
 
-			if (fork() == 0){
-				const char* p = pwdPath.c_str();
+			// if (fork() == 0){
+			// 	const char* p = pwdPath.c_str();
 
-				vector<char*> args;
-				args.push_back(const_cast<char*>(pwd.c_str()));
-				args.push_back(nullptr);
+			// 	vector<char*> args;
+			// 	args.push_back(const_cast<char*>(pwd.c_str()));
+			// 	args.push_back(nullptr);
 
-				execv(p, args.data());
+			// 	execv(p, args.data());
 
-				perror("execv");
-			}
-			else {
-				wait(nullptr);
-			}
+			// 	perror("execv");
+			// }
+			// else {
+			// 	wait(nullptr);
+			// }
+			cout << current_path() << endl;
 		}
 		else {
 			vector<string> params;
