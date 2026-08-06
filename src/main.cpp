@@ -82,10 +82,11 @@ int main() {
 		}
 		else if (input.substr(0, 3) == "pwd"){
 			string pwdPath = "/usr/bin/pwd";
+			string pwd = "pwd";
 
 			if (fork() == 0){
 				vector<char*> args;
-				args.push_back(pwdPath.data());
+				args.push_back(pwd.data());
 
 				args.push_back(nullptr);
 
