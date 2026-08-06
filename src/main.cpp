@@ -44,7 +44,8 @@ int main() {
 	unordered_set<string> builtins = {
 		"exit",
 		"echo",
-		"type"
+		"type",
+		"pwd"
 	};
 
 	while (true){
