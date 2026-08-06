@@ -1,49 +1,76 @@
 #include <iostream>
 #include <string>
 #include <unordered_set>
+#include <fstream>
+#include <filesystem>
 
 using namespace std;
+using namespace std::filesystem;
 
 int main() {
   // Flush after every std::cout / std:cerr
-  std::cout << std::unitbuf;
-  std::cerr << std::unitbuf;
+	std::cout << std::unitbuf;
+	std::cerr << std::unitbuf;
 
-  // TODO: Uncomment the code below to pass the first stage
-  unordered_set<string> builtins = {
-    "exit",
-    "echo",
-    "type"
-  };
+	// TODO: Uncomment the code below to pass the first stage
+	unordered_set<string> builtins = {
+		"exit",
+		"echo",
+		"type"
+	};
 
-  while (true){
-    cout << "$ ";
+	while (true){
+		cout << "$ ";
 
-    string input;
-    getline(cin, input);
+		string input;
+		getline(cin, input);
 
-    if (input == "exit") break;
+		if (input == "exit") break;
 
-    if (input.substr(0, 5) == "echo "){
-      cout << input.substr(5, input.size()) << endl;
-      continue;
-    }
+		if (input.substr(0, 5) == "echo "){
+			cout << input.substr(5, input.size()) << endl;
+			continue;
+		}
 
-    if (input.substr(0, 5) == "type "){
-      string command = input.substr(5);
+		if (input.substr(0, 5) == "type "){
+			string command = input.substr(5);
 
-      if (builtins.find(command) != builtins.end()){
-        cout << command << " is a shell builtin" << endl;
-      }
-      else {
-        cout << command << ": not found" << endl;
-      }
+			if (builtins.find(command) != builtins.end()){
+				cout << command << " is a shell builtin" << endl;
+				continue;
+			}
 
-      continue;
-    }
-    
-    cout << input << ": command not found" << endl;
-  }
+			string PATH = getenv("PATH");
 
-  return 0;
+			string envVar = "";
+			bool found = false;
+
+			for (int i = 0; i < PATH.size(); i++){
+				if (PATH[i] == ':'){
+					envVar += "/" + command;
+					path p = envVar;
+
+					if (exists(p) && is_regular_file(p)){
+						auto perm = status(p).permissions();
+						bool executable = ((perm & perms::owner_exec) != perms::none);
+
+						if (executable) {
+							cout << command << " is " << envVar << endl;
+							found = true;
+							break;
+						}
+					}
+
+					envVar = "";
+				}
+				else envVar += PATH[i];
+			}
+
+			if (!found) cout << command << ": not found" << endl;
+		}
+		
+		cout << input << ": command not found" << endl;
+	}
+
+	return 0;
 }
