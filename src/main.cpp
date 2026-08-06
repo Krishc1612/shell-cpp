@@ -41,6 +41,7 @@ int main() {
 			}
 
 			string PATH = getenv("PATH");
+			PATH += ":";
 
 			string envVar = "";
 			bool found = false;
