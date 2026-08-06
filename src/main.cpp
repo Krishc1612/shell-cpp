@@ -114,6 +114,7 @@ int main() {
 				}
 				else {
 					cout << command << ": not found" << endl;
+					break;
 				}
 			}
 			else {
