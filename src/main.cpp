@@ -1,11 +1,39 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <unordered_set>
 #include <fstream>
 #include <filesystem>
+#include <unistd.h>
+#include <sys/wait.h>
 
 using namespace std;
 using namespace std::filesystem;
+
+pair<bool, string> hasValidExecutable(string& PATH, string& command){
+	string envVar = "";
+
+	for (int i = 0; i < PATH.size(); i++){
+		if (PATH[i] == ':'){
+			envVar += "/" + command;
+			path p = envVar;
+
+			if (exists(p) && is_regular_file(p)){
+				auto perm = status(p).permissions();
+				bool executable = ((perm & perms::owner_exec) != perms::none);
+
+				if (executable) {
+					return {true, envVar};
+				}
+			}
+
+			envVar = "";
+		}
+		else envVar += PATH[i];
+	}
+
+	return {false, ""};
+}
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -25,14 +53,13 @@ int main() {
 		string input;
 		getline(cin, input);
 
-		if (input == "exit") break;
-
-		if (input.substr(0, 5) == "echo "){
-			cout << input.substr(5, input.size()) << endl;
-			continue;
+		if (input == "exit") {
+			break;
 		}
-
-		if (input.substr(0, 5) == "type "){
+		else if (input.substr(0, 5) == "echo "){
+			cout << input.substr(5, input.size()) << endl;
+		}
+		else if (input.substr(0, 5) == "type "){
 			string command = input.substr(5);
 
 			if (builtins.find(command) != builtins.end()){
@@ -43,36 +70,56 @@ int main() {
 			string PATH = getenv("PATH");
 			PATH += ":";
 
-			string envVar = "";
-			bool found = false;
+			auto [isValid, pathTo] = hasValidExecutable(PATH, command);
 
-			for (int i = 0; i < PATH.size(); i++){
-				if (PATH[i] == ':'){
-					envVar += "/" + command;
-					path p = envVar;
-
-					if (exists(p) && is_regular_file(p)){
-						auto perm = status(p).permissions();
-						bool executable = ((perm & perms::owner_exec) != perms::none);
-
-						if (executable) {
-							cout << command << " is " << envVar << endl;
-							found = true;
-							break;
-						}
-					}
-
-					envVar = "";
-				}
-				else envVar += PATH[i];
+			if (isValid){
+				cout << command << " is " << pathTo << endl;
 			}
-
-			if (!found) cout << command << ": not found" << endl;
-			
-			continue;
+			else {
+				cout << command << ": not found" << endl;
+			}
 		}
-		
-		cout << input << ": command not found" << endl;
+		else {
+			vector<string> params;
+			string arg;
+
+			for (int i = 0; i < input.size(); i++){
+				if (input[i] != ' ') arg += input[i];
+				else {
+					params.push_back(arg);
+					arg = "";
+				}
+			}
+			if (arg != "") params.push_back(arg);
+
+			string command = params[0];
+			pid_t pid = fork();
+
+			if (pid == 0){
+				string PATH = getenv("PATH");
+				PATH += ":";
+
+				auto [isValid, pathTo] = hasValidExecutable(PATH, command);
+
+				if (isValid){
+					const char* p = pathTo.data();
+					vector<char*> args;
+
+					for (auto& param: params){
+						args.push_back(param.data());
+					}
+					args.push_back(nullptr);
+
+					execv(p, args.data());
+				}
+				else {
+					cout << command << ": not found" << endl;
+				}
+			}
+			else {
+				wait(nullptr);
+			}
+		}
 	}
 
 	return 0;
