@@ -81,7 +81,7 @@ int main() {
 			}
 		}
 		else if (input == "pwd"){
-			string pwdPath = "/usr/bin/pwd";
+			string pwdPath = "/usr/lib/cargo/bin/coreutils/pwd";
 			string pwd = "pwd";
 
 			if (fork() == 0){
