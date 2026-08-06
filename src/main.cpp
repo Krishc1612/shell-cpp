@@ -79,6 +79,19 @@ int main() {
 				cout << command << ": not found" << endl;
 			}
 		}
+		else if (input.substr(0, 4) == "pwd "){
+			string pwdPath = "/usr/bin/pwd";
+
+			if (fork() == 0){
+				vector<char*> args;
+				args.push_back(pwdPath.data());
+
+				execv(pwdPath.data(), args.data());
+			}
+			else {
+				wait(nullptr);
+			}
+		}
 		else {
 			vector<string> params;
 			string arg;
