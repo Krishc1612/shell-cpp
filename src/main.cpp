@@ -87,6 +87,8 @@ int main() {
 				vector<char*> args;
 				args.push_back(pwdPath.data());
 
+				args.push_back(nullptr);
+
 				execv(pwdPath.data(), args.data());
 			}
 			else {
