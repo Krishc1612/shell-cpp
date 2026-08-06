@@ -91,6 +91,9 @@ int main() {
 				args.push_back(nullptr);
 
 				execv(pwdPath.data(), args.data());
+
+				perror("execv");
+				_exit(1);
 			}
 			else {
 				wait(nullptr);
