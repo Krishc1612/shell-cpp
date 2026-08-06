@@ -80,7 +80,7 @@ int main() {
 				cout << command << ": not found" << endl;
 			}
 		}
-		else if (input.substr(0, 4) == "pwd "){
+		else if (input.substr(0, 3) == "pwd"){
 			string pwdPath = "/usr/bin/pwd";
 
 			if (fork() == 0){
