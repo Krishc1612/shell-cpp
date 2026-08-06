@@ -85,15 +85,15 @@ int main() {
 			string pwd = "pwd";
 
 			if (fork() == 0){
-				vector<char*> args;
-				args.push_back(pwd.data());
+				const char* p = pwdPath.c_str();
 
+				vector<char*> args;
+				args.push_back(const_cast<char*>(pwd.c_str()));
 				args.push_back(nullptr);
 
-				execv(pwdPath.data(), args.data());
+				execv(p, args.data());
 
 				perror("execv");
-				_exit(1);
 			}
 			else {
 				wait(nullptr);
