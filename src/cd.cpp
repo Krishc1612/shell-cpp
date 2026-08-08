@@ -3,9 +3,15 @@
 void cd(vector<string> args){
     path p = args[1];
 
+    if (args[1] == "~") {
+        const char* changeTo = getenv("HOME");
+        chdir(changeTo);
+
+        return;
+    }
+
     if (exists(p) && is_directory(p)){
         const char* changeTo = args[1].c_str();
-
         chdir(changeTo);
     }
     else {
