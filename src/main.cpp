@@ -52,7 +52,7 @@ vector<string> parse(string& input){
 
 	for (const auto& c : input){
 		if (c != ' '){
-			arg += 'c';
+			arg += c;
 		}
 		else {
 			args.push_back(arg);
