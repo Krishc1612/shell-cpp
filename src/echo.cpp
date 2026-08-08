@@ -6,4 +6,5 @@ void echo(vector<string> args){
     for (int i = 1; i < n; i++){
         cout << args[i] << " ";
     }
+    cout << endl;
 }
