@@ -98,7 +98,9 @@ int main() {
 			// else {
 			// 	wait(nullptr);
 			// }
-			string path = current_path();
+			char path[1024];
+			getcwd(path, sizeof(path));
+
 			cout << path << endl;
 		}
 		else {
