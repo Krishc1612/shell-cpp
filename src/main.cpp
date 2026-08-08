@@ -8,11 +8,13 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include "commands.h"
+#include "path_utils.h"
 
 using namespace std;
 using namespace std::filesystem;
 
 unordered_map<string, function<void(vector<string>)>> commands = {
+	{"exit", shellExit},
 	{"echo", echo},
 	{"type", type},
 	{"pwd", pwd},
@@ -44,17 +46,73 @@ unordered_map<string, function<void(vector<string>)>> commands = {
 // 	return {false, ""};
 // }
 
+vector<string> parse(string& input){
+	vector<string> args;
+	string arg = "";
+
+	for (const auto& c : input){
+		if (c != ' '){
+			arg += 'c';
+		}
+		else {
+			args.push_back(arg);
+			arg = "";
+		}
+	}
+	if (!arg.empty()) args.push_back(arg);
+
+	return args;
+}
+
 int main() {
   // Flush after every std::cout / std:cerr
 	std::cout << std::unitbuf;
 	std::cerr << std::unitbuf;
 
 	// TODO: Uncomment the code below to pass the first stage
-	// while (true){
-	// 	cout << "$ ";
+	while (true){
+		cout << "$ ";
 
-	// 	string input;
-	// 	getline(cin, input);
+		string input;
+		getline(cin, input);
+
+		vector<string> args = parse(input);
+
+		if (args[0] == "exit"){
+			break;
+		}
+		else if (commands.find(args[0]) != commands.end()){
+			commands[args[0]](args);
+		}
+		else {
+			string command = args[0];
+
+			string PATH = getenv("PATH");
+			PATH += ":";
+
+			auto [isValid, pathTo] = hasValidExecutable(PATH, command);
+
+			if (isValid){
+				if (fork() == 0){
+					const char* p = pathTo.data();
+					vector<char*> execArgs;
+
+					for (auto& arg: args){
+						execArgs.push_back(arg.data());
+					}
+					execArgs.push_back(nullptr);
+
+					execv(p, execArgs.data());
+				}
+				else {
+					wait(nullptr);
+				}
+			}
+			else {
+				cout << command << ": not found" << endl;
+			}
+		}
+	}
 
 	// 	if (input == "exit") {
 	// 		break;
@@ -130,5 +188,5 @@ int main() {
 	// 	}
 	// }
 
-	// return 0;
+	return 0;
 }

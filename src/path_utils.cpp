@@ -1,7 +1,4 @@
 #include "path_utils.h"
-#include <filesystem>
-
-using namespace std::filesystem;
 
 pair<bool, string> hasValidExecutable(string& PATH, string& command){
     string envVar = "";
