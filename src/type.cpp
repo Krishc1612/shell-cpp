@@ -2,7 +2,7 @@
 #include "path_utils.h"
 
 void type(vector<string> args){
-    string command = args[0];
+    string command = args[1];
 
     if (commands.find(command) != commands.end()){
         cout << command << " is a shell builtin" << endl;
