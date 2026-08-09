@@ -25,13 +25,13 @@ vector<string> tokenize(string& input){
 	vector<string> args;
 	string arg = "";
 
-	bool foundQoute = false;
+	bool foundQuote = false;
 	for (const auto& c : input){
 		if (c == '\''){
-			foundQoute = !foundQoute;
+			foundQuote = !foundQuote;
 		}
 		else {
-			if (foundQoute){
+			if (foundQuote){
 				arg += c;
 			}
 			else {
@@ -41,23 +41,6 @@ vector<string> tokenize(string& input){
 					arg = "";
 				}
 			}
-		}
-	}
-
-	return args;
-}
-
-vector<string> parse(string& input){
-	vector<string> args;
-	string arg = "";
-
-	for (const auto& c : input){
-		if (c != ' '){
-			arg += c;
-		}
-		else {
-			args.push_back(arg);
-			arg = "";
 		}
 	}
 	if (!arg.empty()) args.push_back(arg);
