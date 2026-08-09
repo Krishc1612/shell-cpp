@@ -21,6 +21,32 @@ unordered_map<string, function<void(vector<string>)>> commands = {
 	{"cd", cd}
 };
 
+vector<string> tokenize(string& input){
+	vector<string> args;
+	string arg = "";
+
+	bool foundQoute = false;
+	for (const auto& c : input){
+		if (c == '\''){
+			foundQoute = !foundQoute;
+		}
+		else {
+			if (foundQoute){
+				arg += c;
+			}
+			else {
+				if (c != ' ') arg += c;
+				else if (c == ' ' && !arg.empty()) {
+					args.push_back(arg);
+					arg = "";
+				}
+			}
+		}
+	}
+
+	return args;
+}
+
 vector<string> parse(string& input){
 	vector<string> args;
 	string arg = "";
@@ -50,7 +76,7 @@ int main() {
 		string input;
 		getline(cin, input);
 
-		vector<string> args = parse(input);
+		vector<string> args = tokenize(input);
 
 		if (args[0] == "exit"){
 			break;
