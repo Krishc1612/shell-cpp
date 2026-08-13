@@ -43,7 +43,11 @@ vector<string> tokenize(string& input){
 			singleQuote = !singleQuote;
 		}
 		else {
-			if (doubleQuote || singleQuote){
+			if (doubleQuote){
+				if (c == '\\') isSlashed = true;
+				else arg += c;
+			}
+			else if (singleQuote){
 				arg += c;
 			}
 			else {
