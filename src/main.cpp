@@ -27,8 +27,14 @@ vector<string> tokenize(string& input){
 
 	bool singleQuote = false;
 	bool doubleQuote = false;
+	bool isSlashed = false;
 
 	for (const auto& c : input){
+		if (isSlashed){
+			arg += c;
+			continue;
+		}
+
 		if (c == '\"' && !singleQuote){
 			doubleQuote = !doubleQuote;
 		}
@@ -40,7 +46,10 @@ vector<string> tokenize(string& input){
 				arg += c;
 			}
 			else {
-				if (c != ' ') arg += c;
+				if (c != ' ') {
+					if (c == '\\') isSlashed = true;
+					else arg += c;
+				}
 				else if (c == ' ' && !arg.empty()) {
 					args.push_back(arg);
 					arg = "";
