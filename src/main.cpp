@@ -32,6 +32,7 @@ vector<string> tokenize(string& input){
 	for (const auto& c : input){
 		if (isSlashed){
 			arg += c;
+			isSlashed = false;
 			continue;
 		}
 
