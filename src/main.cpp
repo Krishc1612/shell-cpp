@@ -10,17 +10,11 @@
 #include "commands.h"
 #include "path_utils.h"
 #include "tokenize.h"
+#include "parse.h"
+#include "execute.h"
 
 using namespace std;
 using namespace std::filesystem;
-
-unordered_map<string, function<void(vector<string>)>> commands = {
-	{"exit", shellExit},
-	{"echo", echo},
-	{"type", type},
-	{"pwd", pwd},
-	{"cd", cd}
-};
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -33,42 +27,54 @@ int main() {
 		string input;
 		getline(cin, input);
 
-		vector<string> args = tokenize(input);
+		vector<Token> tokens = tokenize(input);
 
-		if (args[0] == "exit"){
-			break;
+		// for (Token& token : tokens){
+		// 	cout << "\"" << token.data << "\"" << " ";
+		// }
+		// cout << endl;
+
+		if (tokens.size()){
+			Task toExec = parse(tokens);
+			bool isExit = execute(toExec);
+
+			if (isExit) break;
 		}
-		else if (commands.find(args[0]) != commands.end()){
-			commands[args[0]](args);
-		}
-		else {
-			string command = args[0];
 
-			string PATH = getenv("PATH");
-			PATH += ":";
+		// if (args[0] == "exit"){
+		// 	break;
+		// }
+		// else if (commands.find(args[0]) != commands.end()){
+		// 	commands[args[0]](args);
+		// }
+		// else {
+		// 	string command = args[0];
 
-			auto [isValid, pathTo] = hasValidExecutable(PATH, command);
+		// 	string PATH = getenv("PATH");
+		// 	PATH += ":";
 
-			if (isValid){
-				if (fork() == 0){
-					const char* p = pathTo.data();
-					vector<char*> execArgs;
+		// 	auto [isValid, pathTo] = hasValidExecutable(PATH, command);
 
-					for (auto& arg: args){
-						execArgs.push_back(arg.data());
-					}
-					execArgs.push_back(nullptr);
+		// 	if (isValid){
+		// 		if (fork() == 0){
+		// 			const char* p = pathTo.data();
+		// 			vector<char*> execArgs;
 
-					execv(p, execArgs.data());
-				}
-				else {
-					wait(nullptr);
-				}
-			}
-			else {
-				cout << command << ": not found" << endl;
-			}
-		}
+		// 			for (auto& arg: args){
+		// 				execArgs.push_back(arg.data());
+		// 			}
+		// 			execArgs.push_back(nullptr);
+
+		// 			execv(p, execArgs.data());
+		// 		}
+		// 		else {
+		// 			wait(nullptr);
+		// 		}
+		// 	}
+		// 	else {
+		// 		cout << command << ": not found" << endl;
+		// 	}
+		// }
 	}
 
 	return 0;

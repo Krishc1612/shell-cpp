@@ -3,7 +3,21 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
-vector<string> tokenize(string& input);
+enum TokenType {
+    WORD,
+    REDIRECT_IN,
+    REDIRECT_OUT,
+    REDIRECT_ERR,
+    T_NULL
+};
+
+struct Token {
+    TokenType type = WORD;
+    string data = "";
+};
+
+vector<Token> tokenize(string& input);
