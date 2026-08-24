@@ -14,7 +14,9 @@ unordered_map<string, function<void(vector<string>)>> commands = {
 unordered_map<TokenType, int> stdFd = {
     {REDIRECT_OUT, STDOUT_FILENO},
     {REDIRECT_ERR, STDERR_FILENO},
-    {REDIRECT_IN, STDIN_FILENO}
+    {REDIRECT_IN, STDIN_FILENO},
+    {REDIRECT_OUT_APP, STDOUT_FILENO},
+    {REDIRECT_ERR_APP, STDERR_FILENO}
 };
 
 int setupRedirect(Redirect& redirect){
@@ -29,6 +31,12 @@ int setupRedirect(Redirect& redirect){
     }
     else if (redirect.type == REDIRECT_IN) {
         flags = O_RDONLY;
+    }
+    else if (
+        redirect.type == REDIRECT_OUT_APP ||
+        redirect.type == REDIRECT_ERR_APP
+    ) {
+        flags = O_WRONLY | O_CREAT | O_APPEND;
     }
     else {
         return -1;

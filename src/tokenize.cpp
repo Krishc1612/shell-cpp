@@ -1,6 +1,13 @@
 #include "tokenize.h"
 
-vector<TokenType> fileDesc = {REDIRECT_IN, REDIRECT_OUT, REDIRECT_ERR};
+unordered_map<string, TokenType> fileDesc = {
+	{"0>", REDIRECT_IN},
+	{">", REDIRECT_OUT},
+	{"1>", REDIRECT_OUT},
+	{"2>", REDIRECT_ERR},
+	{"1>>", REDIRECT_OUT_APP},
+	{"2>>", REDIRECT_ERR_APP}
+};
 
 vector<Token> tokenize(string& input){
 	vector<Token> args;
@@ -9,6 +16,7 @@ vector<Token> tokenize(string& input){
 	bool singleQuote = false;
 	bool doubleQuote = false;
 	bool isSlashed = false;
+	bool isRedirect = false;
 
 	for (const auto& c : input){
 		if (isSlashed){
@@ -16,28 +24,35 @@ vector<Token> tokenize(string& input){
 			isSlashed = false;
 			continue;
 		}
+		else if (isRedirect){
+			if (c == '>' || c == ' '){
+				if (c == '>') arg.data += c;
+				arg.type = fileDesc[arg.data];
+
+				args.push_back(arg);
+				arg.data = "";
+				arg.type = WORD;
+
+				continue;
+			}
+		}
 
 		if (c == '>' && (!doubleQuote && !singleQuote)){
 			if (arg.data.empty()){
 				arg.data += c;
-				arg.type = REDIRECT_OUT;
 			}
 			else if (
 				arg.data.size() == 1 && 
 				(arg.data[0] >= '0' && arg.data[0] <= '2') 
 			){
 				arg.data += c;
-				arg.type = fileDesc[arg.data[0] - '0'];
 			}
 			else {
 				args.push_back(arg);
 				arg.data = string(1, c);
-				arg.type = REDIRECT_OUT;
 			}
 
-			args.push_back(arg);
-			arg.data = "";
-			arg.type = WORD;
+			isRedirect = true;
 		}
 		else if (c == '\"' && !singleQuote){
 			doubleQuote = !doubleQuote;

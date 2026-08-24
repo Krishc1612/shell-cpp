@@ -12,6 +12,8 @@ enum TokenType {
     REDIRECT_IN,
     REDIRECT_OUT,
     REDIRECT_ERR,
+    REDIRECT_OUT_APP,
+    REDIRECT_ERR_APP,
     T_NULL
 };
 
