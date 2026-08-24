@@ -5,6 +5,7 @@ unordered_map<string, TokenType> fileDesc = {
 	{">", REDIRECT_OUT},
 	{"1>", REDIRECT_OUT},
 	{"2>", REDIRECT_ERR},
+	{">>", REDIRECT_OUT_APP},
 	{"1>>", REDIRECT_OUT_APP},
 	{"2>>", REDIRECT_ERR_APP}
 };
@@ -25,6 +26,8 @@ vector<Token> tokenize(string& input){
 			continue;
 		}
 		else if (isRedirect){
+			isRedirect = false;
+
 			if (c == '>' || c == ' '){
 				if (c == '>') arg.data += c;
 				arg.type = fileDesc[arg.data];
